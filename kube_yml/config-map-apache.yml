@@ -1,0 +1,140 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apache-config-map
+data:
+  index.php: |
+    <?php
+    $UWAMPFOLDER="../";
+    ?>
+    <html>
+    <head>
+    <title>Hladovec</title>
+    <link rel="shortcut icon" type="image/x-icon" href="./?getimg=favicon" /> 
+
+    </head>
+    <body>
+    Ahoj, Hladovče!<p><hr>
+    <?php
+      copy("https://www.napekarce.cz/poledni-nabidka/index.php", "./napekarce.htm");	
+      $zdrojJmeno="./napekarce.htm";
+      $zdroj=fopen($zdrojJmeno, "r"); //r je číst, r+ je číst+zápis, w+ nejdřív smaže obsah
+      $zdrojDelka=filesize($zdrojJmeno);
+      $cil=fopen("./cil.htm", "a+"); //a+ zapíše text na konec
+      //fwrite($soubor, $text); zápis na konec
+      
+      $text = fread($zdroj, $zdrojDelka); //přečte vše 
+      $najdi='dm-name';
+      $poziceStart=strpos($text, $najdi); //začátek jídel
+            // mb_strpos počítá multiznaky jako jeden !!!
+      //echo "<br>tady: ".$poziceStart." ".$zdrojDelka;
+      $najdi='/table';
+      $poziceKonec=strpos($text, $najdi); //konec jídel
+      //echo "<br>tady: ".$poziceKonec." ".$zdrojDelka;
+      fclose($zdroj);
+      $zdroj=fopen($zdrojJmeno, "r"); //znova otevřu, abych načetl jen sekci jídel
+      $text = fread($zdroj, $poziceStart+9);
+      $text = fread($zdroj, $poziceKonec-$poziceStart-9); //všechna jídla v $text
+      //echo "<br>--------<br><table>".$text;
+      
+      //echo "</table>§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§<br>";
+
+      
+      //+++++++++++++++++++++++++++++++++
+      $poledni=strpos($text,"Poledn");
+      $datum=substr($text,$poledni,44);
+      echo "Restaurace Na Pekařce - ".$datum."<br>";
+      echo "<table><tr>";
+        $jidloKonec=strpos($text,"</tr>");
+        //-------gramy-------------------------------
+        echo"<td>";
+        $gramyZac=strpos($text,"td-cislo"); //echo $gramyZac;
+        $gramyKon=strpos($text,"</td"); 	//echo $gramyKon; echo " %%% ";
+        $vaha=substr($text,$gramyZac+10,$gramyKon-$gramyZac+3);
+        echo " <font color=red>".$vaha."</font>";	//.".+1+.";
+        //------jídlo------------------------------
+        echo"<td>";
+        $gramyZac=strpos($text,"td-jidlo-obsah"); //echo $gramyZac;
+        $gramyKon=strpos($text,"td-cena"); 		  //echo $gramyKon; echo " %%% ";
+        //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+        //echo "+++.$gramyZac.".
+        $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
+        echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
+        //-----cena-------------------------------
+        echo"<td>";
+        $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
+        $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
+        $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
+        $cena=substr($text,$gramyZac+9,$gramyKon);
+        echo "<font color=blue>".$cena."</font><br>";
+        //-------------------------------------------
+        //echo " ooo".$jidloKonec."<br>";
+      //+++++++++++++++++++++++++++++++++
+      //+++++++++++++++++++++++++++++++++
+        $delka=strlen($text);	//	echo "<font color=black> ".$delka." </font>";
+        while ($delka>590){
+          echo "<tr>";
+          $text=substr($text,$jidloKonec+20,$poziceKonec); 
+          $jidloKonec=strpos($text,"</tr>");	//	echo "<font color=black> ".$jidloKonec." </font>";
+          $delka=strlen($text);		//echo "<font color=black> ".$delka." </font>";
+          //-------gramy-------------------------------
+          echo"<td>";
+          $gramyZac=strpos($text,"td-cislo"); //echo $gramyZac;
+          $gramyKon=strpos($text,"</td"); 	//echo $gramyKon; echo " %%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          $vaha=substr($text,$gramyZac+10,$gramyKon-$gramyZac+3);
+          echo " <font color=red>".$vaha."</font>";	//.".+1+.";
+          //------jídlo------------------------------
+          echo"<td>";
+          $gramyZac=strpos($text,"td-jidlo-obsah"); //echo $gramyZac;
+          $gramyKon=strpos($text,"td-cena"); 		  //echo $gramyKon; echo " %%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
+          echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
+          //-----cena-------------------------------
+          echo"<td>";
+          $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
+          $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
+          $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
+          $cena=substr($text,$gramyZac+9,$gramyKon);
+          echo "<font color=blue>".$cena."</font><br>";
+        };
+      //+++++++++++++++++++++++++++++++++
+      echo "</table>";
+      /*	//+++++++++++++++++++++++++++++++++
+        $text=substr($text,$jidloKonec+20,$poziceKonec); 
+        $jidloKonec=strpos($text,"</tr>");		echo "<font color=black> ".$jidloKonec." </font>";
+        $delka=strlen($text);		echo "<font color=black> ".$delka." </font>";
+        //-------gramy-------------------------------
+        $gramyZac=strpos($text,"td-cislo"); //echo $gramyZac;
+        $gramyKon=strpos($text,"</td"); 	//echo $gramyKon; echo " %%% ";
+        //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+        //echo "+++.$gramyZac.".
+        $vaha=substr($text,$gramyZac+10,$gramyKon-$gramyZac+3);
+        echo " <font color=red>".$vaha."</font>";	//.".+1+.";
+        //------jídlo------------------------------
+        $gramyZac=strpos($text,"td-jidlo-obsah"); //echo $gramyZac;
+        $gramyKon=strpos($text,"td-cena"); 		  //echo $gramyKon; echo " %%% ";
+        //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+        //echo "+++.$gramyZac.".
+        $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
+        echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
+        //-----cena-------------------------------
+        $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
+        $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
+        $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
+        $cena=substr($text,$gramyZac+9,$gramyKon);
+        echo "<font color=blue>".$cena."</font><br>";
+      //+++++++++++++++++++++++++++++++++
+
+      
+      */
+      
+      
+    ?>
+
+    </body>
+    </html>
+      
