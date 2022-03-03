@@ -16,7 +16,9 @@ data:
     <body>
     Ahoj, Hladovče!<p><hr>
     <?php
-      copy("https://www.napekarce.cz/poledni-nabidka/index.php", "./napekarce.htm");	
+      
+      {//+++++++++++start pekarka+++++++++++++++++
+      copy("https://www.napekarce.cz/poledni-nabidka/index.php", "./napekarce.htm");
       $zdrojJmeno="./napekarce.htm";
       $zdroj=fopen($zdrojJmeno, "r"); //r je číst, r+ je číst+zápis, w+ nejdřív smaže obsah
       $zdrojDelka=filesize($zdrojJmeno);
@@ -61,7 +63,7 @@ data:
         $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
         echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
         //-----cena-------------------------------
-        echo"<td>";
+        echo"<td align=right>";
         $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
         $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
         $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
@@ -94,7 +96,7 @@ data:
           $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
           echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
           //-----cena-------------------------------
-          echo"<td>";
+          echo"<td align=right>";
           $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
           $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
           $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
@@ -103,38 +105,119 @@ data:
         };
       //+++++++++++++++++++++++++++++++++
       echo "</table>";
-      /*	//+++++++++++++++++++++++++++++++++
-        $text=substr($text,$jidloKonec+20,$poziceKonec); 
-        $jidloKonec=strpos($text,"</tr>");		echo "<font color=black> ".$jidloKonec." </font>";
-        $delka=strlen($text);		echo "<font color=black> ".$delka." </font>";
-        //-------gramy-------------------------------
-        $gramyZac=strpos($text,"td-cislo"); //echo $gramyZac;
-        $gramyKon=strpos($text,"</td"); 	//echo $gramyKon; echo " %%% ";
-        //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
-        //echo "+++.$gramyZac.".
-        $vaha=substr($text,$gramyZac+10,$gramyKon-$gramyZac+3);
-        echo " <font color=red>".$vaha."</font>";	//.".+1+.";
-        //------jídlo------------------------------
-        $gramyZac=strpos($text,"td-jidlo-obsah"); //echo $gramyZac;
-        $gramyKon=strpos($text,"td-cena"); 		  //echo $gramyKon; echo " %%% ";
-        //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
-        //echo "+++.$gramyZac.".
-        $jidlo=substr($text,$gramyZac+16,$gramyKon-$gramyZac-54);
-        echo "<font color=green>".$jidlo." </font>"; 	//	echo ".+2+.";
-        //-----cena-------------------------------
-        $gramyZac=strpos($text,"td-cena"); //echo "<font color=black> ".$gramyZac." </font>";		 
-        $textPom=substr($text,$gramyZac+9,15); //echo "<font color=red> ".$textPom." </font>";	
-        $gramyKon=strpos($textPom,"</td>"); //echo "<font color=red> ".$gramyKon." </font>";
-        $cena=substr($text,$gramyZac+9,$gramyKon);
-        echo "<font color=blue>".$cena."</font><br>";
-      //+++++++++++++++++++++++++++++++++
-
+      }
+      //+++++++++++konec pekarka+++++++++++++++++
       
-      */
+      {//+++++++++++start Šalanda+++++++++++++++++
+        copy("https://www.restauracesalanda.cz/cs/salanda/pankrac/","./salanda.htm");
+        $zdrojJmeno="./salanda.htm";
+        $zdroj=fopen($zdrojJmeno, "r"); //r je číst, r+ je číst+zápis, w+ nejdřív smaže obsah
+        $zdrojDelka=filesize($zdrojJmeno);	
+        $text = fread($zdroj, $zdrojDelka); //přečte vše 
+        //$najdi='<!-- DAILY MEALS  -->';
+        $poziceStart=strpos($text, "<!-- DAILY MEALS  -->"   ); //echo "<br>poziceStart: ".$poziceStart."<br>";//začátek jídel
+        $poziceKonec=strpos($text, "<!-- DAILY MEALS END -->"); //echo "poziceKonec: ".$poziceKonec."<br>";//konec jídel
+        $text=substr($text,$poziceStart,$poziceKonec-$poziceStart);			
+        //echo "<br>---".strlen($text)."-----<br>";//.$text; asi 8089
+        //++++datum+++++++++++++++++++++++++++++
+        $poledni=strpos($text,"switcher"); //+10
+        $datum=substr($text,$poledni+10,444); //echo "<font color=green>v " .$datum. "v</font>";
+        $poledni2=strpos($datum,"switcher"); //+10
+        $datum2=substr($datum,$poledni2+10,14); //echo "<font color=red>w " .$datum2. "v</font>";
+        $datum=substr($datum,0,16);
+        echo "<hr><br>Restaurace Šalanda - ".$datum." a ".$datum2." <br>";
+        //echo "§§§".$text."§§§";
+        $pozice=strpos($text,"display:table"); 	//echo "<font color=blue> tbody: ".$pozice." </font>"; //966
+        $hledej1=strpos($text,"volume");  		//echo "<font color=red> volume: ".$hledej1." </font>"; //
+        $aaa=$text;
+        $kde=strpos($aaa,"<tr>"); 				//echo "<font color=green>.".$kde.".</font>";
+        $text=substr($aaa,$kde);
+        echo "";
+        //++++konec datum+++++++++++++++++++++++
+        $pozice=strpos($text,"DENNÍ"); 			//echo "<font color=red> DENNÍ: ".$pozice." </font>"; //966
+        $textDelka=strlen($text);				//echo "<font color=green> ".$textDelka." </font><br>1<hr>";
+      /*	echo "<table>";
+        echo $text;
+        echo "</table>";
+      */	//echo "<br>polevka ".$polevka."<br>";
+        //echo "2<hr>"; //----------------------------
+        //načti a rozděl celý řádek ----------
+        echo "<table border=0>";	//<tr><td>";
+        //echo "€".$textDelka;
+        $pppTrS=strpos($text,"<tr>"); //najdi začátek řádku
+        while ( $textDelka > 333) {
+          echo "<tr>";
+          //echo "<td><font color=blue> tr: ".$pppTrS." </font>";
+          //echo " tD: ".$textDelka."";
+          //$textDelka=strlen($text); echo " ".$textDelka;
+          $pppTrK=strpos($text,"</tr>")+3; 	//echo "<td><font color=red> /tr: ".$pppTrK." </font>"; //najdi konec řádku
+          $delkaTr=$pppTrK-$pppTrS; 			//echo "dTr: ".$delkaTr;
+          $bbb=substr($text,$pppTrS+4,$pppTrK-8); //$bbb načten celý řádek
+          //echo "<td>".$bbb;
+          //-------gramy-------------------------------
+          echo"<td>";
+          $gramyZac=strpos($bbb,"volume"); 	//echo " 1gz:".$gramyZac;
+          $gramyKon=strpos($bbb,"</td"); 		//echo " 1gk:".$gramyKon; echo " 1%%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          $vaha=substr($bbb,$gramyZac+8, $gramyKon-$gramyZac-8 );
+          echo " <font color=red>".$vaha."</font>";	//.".+1+.";
+          //-------jidlo-------------------------------
+          echo"<td>";
+          $gramyZac=strpos($bbb,"title cond"); 			//echo " 2gz:".$gramyZac;
+          $gramyKon=strpos($bbb,"allergen", $gramyZac); 	//echo " 2gk:".$gramyKon; echo " 2%%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          $vaha=substr($bbb, $gramyZac+12, $gramyKon-41-$gramyZac);
+          echo " <font color=green>".$vaha."</font>";	//.".+1+.";
+          //-------alergeny-------------------------------
+          echo"<td>";
+          $gramyZac=strpos($bbb, "allergen"); 				//echo " 3gz:".$gramyZac;
+          $gramyKon=strpos($bbb, "price cond",$gramyZac); 	//echo " 3gk:".$gramyKon; echo " 3%%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          $vaha=substr($bbb, $gramyZac+10, $gramyKon-$gramyZac-59);
+          echo " <font color=green>".$vaha."</font>";		//.".+1+.";
+          //-------cena-------------------------------
+          echo"
+          <td align=right>";
+          $gramyZac=strpos($bbb, "price cond")+21; 		//	echo " 4gz:".$gramyZac;
+          
+        /*	echo "<hr>";
+          echo substr($bbb,$gramyZac);
+          echo "<hr>";
+        */	$gramyKon=strpos($bbb, "</", $gramyZac)-1; 	//	echo " 4gk:".$gramyKon; echo " 4%%% ";
+          //echo "<br>-+$gramyZac+++$gramyKon+--<br><br>";
+          //echo "+++.$gramyZac.".
+          //$vaha=substr($bbb, $gramyZac+21, $gramyKon-$gramyZac-59);
+          $vaha=substr($bbb, $gramyZac, $gramyKon-$gramyZac);
+          echo " <font color=blue>".$vaha."</font>";	//.".+1+.";
+          
+          $textDelka=strlen($text);				//echo "<font color=blue >".$textDelka." </font>";
+                              //echo "<font color=red >".$pppTrK." </font>";
+          $text=substr($text, $pppTrK+2);
+          $textDelka=strlen($text);				//echo "<font color=blue >".$textDelka." </font>";
+          // $pppTrS=strpos($text,"<tr>"); echo "<font color=blue> tr: ".$pppTrS." </font>"; //najdi nový začátek řádku
+          // $textDelka=99;
+          //echo "ěěě</tr>";
+        }
+        echo "</table>";
+        //konec načti a rozděl celý řádek ---------
+        //++++polevka+++++++++++++++++++++++++++++
+        
+        //++++konec polevka+++++++++++++++++++++++
+        //echo"§§§<table>".$text."<table>§§§<hr>";
+        
+        
+      
+        
+        
+      }
+      //+++++++++++konec Šalanda+++++++++++++++++
+      echo "<hr>";
       
       
     ?>
 
     </body>
     </html>
-      
