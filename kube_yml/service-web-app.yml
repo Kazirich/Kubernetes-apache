@@ -1,16 +1,28 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web-app-service
+  name: deploy-web-app
+  namespace: webapp
+  resourceVersion: "370782"
+  uid: 656eb2aa-4a35-4acf-9786-5439b9a71f85
 spec:
-  type: NodePort
+  clusterIP: 10.109.168.165
+  clusterIPs:
+  - 10.109.168.165
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - nodePort: 31040
+    port: 8080
+    protocol: TCP
+    targetPort: 80
   selector:
     app: web-app
-  ports:
-    - port: 80
-      targetPort: 80
-
-      nodePort: 30080
-
-
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
 
