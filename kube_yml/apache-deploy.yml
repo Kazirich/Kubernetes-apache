@@ -25,14 +25,14 @@ spec:
             limits:
               memory: 20Mi
               cpu: 20m
-          volumeMounts:
-            - name: apache-config
-              mountPath: /var/www/html
-              readOnly: false
-          securityContext:
-            readOnlyRootFilesystem: false
-      volumes:
-        - name: apache-config
-          configMap: 
-            name: apache-config-map
-            defaultMode: 0666
+##          volumeMounts:
+##            - name: apache-config
+##              mountPath: /var/www/html
+##              readOnly: false
+##          securityContext:
+##            readOnlyRootFilesystem: false
+##      volumes:
+##        - name: apache-config
+##          configMap: 
+##            name: apache-config-map
+##            defaultMode: 0666
